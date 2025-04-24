@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>待办清单</title>
+  <style>
+    body { max-width: 600px; margin: 20px auto; padding: 20px; }
+    input { width: 70%; padding: 8px; }
+    button { padding: 8px 16px; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>我的待办事项</h1>
+  <input type="text" id="todoInput" placeholder="输入待办事项">
+  <button onclick="addTodo()">添加</button>
+  <ul id="todoList"></ul>
+
+  <script>
+    // 替换为你的 Worker 域名（稍后填写）
+    const API_URL = 'https://your-worker.workers.dev';
+
+    async function loadTodos() {
+      const response = await fetch(API_URL);
+      const todos = await response.json();
+      document.getElementById('todoList').innerHTML = todos.map(todo => `<li>${todo}</li>`).join('');
+    }
+
+    async function addTodo() {
+      const input = document.getElementById('todoInput');
+      const todo = input.value.trim();
+      if (!todo) return;
+
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(todo)
+      });
+
+      input.value = '';
+      loadTodos();
+    }
+
+    loadTodos();
+  </script>
+</body>
+</html>
